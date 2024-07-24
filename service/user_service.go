@@ -9,6 +9,7 @@ import (
 
 type UserService interface {
 	SaveUser(*entity.User) (*entity.User, error)
+	FindAllUser() ([]entity.User, error)
 }
 
 type userService struct {
@@ -27,4 +28,8 @@ func (s *userService) SaveUser(user *entity.User) (*entity.User, error) {
 	hashedPassword, _ := util.HashPassword(user.Password)
 	user.Password = hashedPassword
 	return s.userRepo.CreateUser(user)
+}
+
+func (s *userService) FindAllUser() ([]entity.User, error) {
+	return s.userRepo.FindAllUser()
 }

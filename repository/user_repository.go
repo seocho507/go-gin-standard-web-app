@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	CreateUser(user *entity.User) (*entity.User, error)
+	FindAllUser() ([]entity.User, error)
 }
 
 type userRepository struct {
@@ -39,4 +40,15 @@ func (r *userRepository) CreateUser(user *entity.User) (*entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (r *userRepository) FindAllUser() ([]entity.User, error) {
+	var users []entity.User
+	err := r.db.Find(&users).Error
+	if err != nil {
+		r.log.WithError(err).Error("Failed to find all users")
+		return nil, err
+	}
+
+	return users, nil
 }

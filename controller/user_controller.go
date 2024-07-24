@@ -32,7 +32,8 @@ func (c *UserController) setRoutes(router *router.Router, userService service.Us
 	c.userService = userService
 	c.log = log
 
-	c.router.Engine.POST("/user", c.SaveUser)
+	c.router.Engine.POST("/users", c.SaveUser)
+	c.router.Engine.GET("/users/all", c.FindAllUser)
 }
 
 func (c *UserController) SaveUser(ctx *gin.Context) {
@@ -55,4 +56,14 @@ func (c *UserController) SaveUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(200, saveUser)
+}
+
+func (c *UserController) FindAllUser(ctx *gin.Context) {
+	user, err := c.userService.FindAllUser()
+	if err != nil {
+		c.log.WithError(err).Error("Failed to get user")
+		return
+	}
+	ctx.JSON(200, user)
+
 }

@@ -6,5 +6,5 @@ type User struct {
 	gorm.Model
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
+	Password string `json:"-" binding:"required,min=8"`
 }
