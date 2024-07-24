@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/go-playground/validator/v10"
 	"github.com/seocho507/go-gin-standard-web-app/config"
 	. "github.com/seocho507/go-gin-standard-web-app/constant"
 	"github.com/seocho507/go-gin-standard-web-app/controller"
@@ -40,10 +41,11 @@ func main() {
 		log.WithError(err).Fatal("Failed to connect to database")
 	}
 
+	v := validator.New()
 	userRepo := repository.NewUserRepository(db, log)
 	userService := service.NewUserService(userRepo, log)
 	router := router.InitRouter(cfg, log)
-	controller.NewUserController(userService, log, router)
+	controller.NewUserController(userService, log, router, v)
 	err = router.Engine.Run(cfg.ServerInfo.Port)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to start server")
