@@ -46,7 +46,7 @@ func main() {
 	userService := service.NewUserService(userRepo, log)
 	r := router.InitRouter(cfg, log)
 	controller.NewUserController(userService, log, r, v)
-	err = r.Engine.Run(cfg.ServerInfo.Port)
+	err = r.Run()
 	if err != nil {
 		log.WithError(err).Fatal("Failed to start server")
 		panic(err)

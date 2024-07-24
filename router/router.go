@@ -39,3 +39,7 @@ func InitRouter(cfg *config.Config, log *logrus.Logger) *Router {
 
 	return r
 }
+
+func (r *Router) Run() error {
+	return r.Engine.Run(r.cfg.ServerInfo.Port)
+}
