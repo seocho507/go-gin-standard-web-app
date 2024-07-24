@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/seocho507/go-gin-standard-web-app/config"
 	. "github.com/seocho507/go-gin-standard-web-app/constant"
+	"github.com/seocho507/go-gin-standard-web-app/controller"
 	"github.com/seocho507/go-gin-standard-web-app/repository"
 	"github.com/seocho507/go-gin-standard-web-app/router"
 	"github.com/seocho507/go-gin-standard-web-app/service"
@@ -34,7 +35,18 @@ func main() {
 	cfg := config.NewConfig(configPath, log)
 	log.WithField("config", cfg).Info("Config file loaded successfully")
 
-	repo := repository.NewRepository(cfg, log)
-	serv := service.NewService(cfg, repo, log)
-	router.InitRouter(cfg, serv, log)
+	db, err := repository.ConnectDatabase(cfg, log)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to connect to database")
+	}
+
+	userRepo := repository.NewUserRepository(db, log)
+	userService := service.NewUserService(userRepo, log)
+	router := router.InitRouter(cfg, log)
+	controller.NewUserController(userService, log, router)
+	err = router.Engine.Run(cfg.ServerInfo.Port)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to start server")
+		panic(err)
+	}
 }

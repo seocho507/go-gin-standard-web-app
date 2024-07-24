@@ -7,30 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository interface {
-}
-
-type repository struct {
-	config *config.Config
-	log    *logrus.Logger
-	db     *gorm.DB
-}
-
-func NewRepository(config *config.Config, log *logrus.Logger) Repository {
-	r := &repository{
-		config: config,
-		log:    log,
-	}
-
-	var err error
-	if r.db, err = connectDatabase(config, log); err != nil {
-		panic(err)
-	}
-
-	return r
-}
-
-func connectDatabase(cfg *config.Config, log *logrus.Logger) (*gorm.DB, error) {
+func ConnectDatabase(cfg *config.Config, log *logrus.Logger) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
