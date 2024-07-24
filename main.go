@@ -44,9 +44,9 @@ func main() {
 	v := validator.New()
 	userRepo := repository.NewUserRepository(db, log)
 	userService := service.NewUserService(userRepo, log)
-	router := router.InitRouter(cfg, log)
-	controller.NewUserController(userService, log, router, v)
-	err = router.Engine.Run(cfg.ServerInfo.Port)
+	r := router.InitRouter(cfg, log)
+	controller.NewUserController(userService, log, r, v)
+	err = r.Engine.Run(cfg.ServerInfo.Port)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to start server")
 		panic(err)

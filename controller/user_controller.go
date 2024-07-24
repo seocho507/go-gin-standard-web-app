@@ -6,8 +6,8 @@ import (
 	"github.com/seocho507/go-gin-standard-web-app/entity"
 	"github.com/seocho507/go-gin-standard-web-app/router"
 	"github.com/seocho507/go-gin-standard-web-app/service"
+	"github.com/seocho507/go-gin-standard-web-app/util"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type UserController struct {
@@ -43,15 +43,9 @@ func (c *UserController) SaveUser(ctx *gin.Context) {
 		return
 	}
 
-	// TODO : Extract validation logic to middleware or util
-	if err := c.validator.Struct(&u); err != nil {
-		c.log.WithError(err).Error("Validation failed")
-		validationErrors := err.(validator.ValidationErrors)
-		errorMessages := make(map[string]string)
-		for _, fieldError := range validationErrors {
-			errorMessages[fieldError.Field()] = fieldError.Error()
-		}
-		ctx.JSON(http.StatusBadRequest, gin.H{"validation_errors": errorMessages})
+	isValid, msg := util.Validate(c.validator, c.log, u)
+	if !isValid {
+		ctx.JSON(400, gin.H{"validation error": msg})
 		return
 	}
 
